@@ -22,8 +22,10 @@ const Export = (props) => {
           </div>
           <div className="menu">
             <Link className="item" to="/">Home</Link>
+            { JSON.stringify(props.account) }
             {props.account === null ? <Link className="item" to="/auth/login">Login</Link> : null}
             {props.account === null ? <Link className="item" to="/auth/register">Register</Link> : null}
+            {props.account !== null ? <Link className="item" to={`/profile/${props.account.username}`}>My profile</Link> : null}
           </div>
           <div onClick={() => { setMenu(!menuToggle) }} className="menu-button">
             <i className="fa fa-bars"></i>

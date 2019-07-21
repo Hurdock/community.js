@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import Header from './Layouts/Header';
 import Axios from '../utils/axios';
 
-const Export = (props) => {	
+const Export = (props) => {
 	const [alert, updateAlert] = useState({ type: null, message: null });
 	if(props.account != null) { props.history.replace('/'); }
 
@@ -16,7 +16,7 @@ const Export = (props) => {
 		setTimeout(() => updateAlert({ type: null, message: null }), 3000);
 	}
 
-	const formsSchema = Yup.object().shape({
+	const SignupSchema = Yup.object().shape({
 		username: Yup.string()
 			.min(2, 'Too Short!')
 			.max(50, 'Too Long!')
@@ -24,26 +24,30 @@ const Export = (props) => {
 		password: Yup.string()
 			.min(2, 'Too Short!')
 			.max(50, 'Too Long!')
-			.required('Password is required')
+			.required('Password is required'),
+		cpassword: Yup.string().oneOf([Yup.ref('password'), null], "Passwords don't match").required('Confirm Password is required'),
+		email: Yup.string()
+			.email('Invalid email')
+			.required('Email address is required')
 	});
 
 	return (
 		<React.Fragment>
-			<Header title="Authentication"></Header>
+			<Header title="Create a new account"></Header>
 			<Container>
 				<Row>
 					<Col lg={8}>
-						<h1>Authentication</h1>
+						<h1>Register</h1>
 						<hr />
 						{alert.type !== null ? <Alert variant={alert.type}>{alert.message}</Alert> : null}
 						<Formik
-							validationSchema={formsSchema}
-							initialValues={{ username: '', password: '' }}
+							validationSchema={SignupSchema}
+							initialValues={{ username: '', email: '', password: '', cpassword: '' }}
 							onSubmit={(values, actions) => {
-								Axios.post('/auth/login', { form: values }).then((res) => {
+								Axios.post('/auth/register', { form: values }).then((res) => {
 									setAlert({
 										type: 'success',
-										message: `You have successfully logged in. You'll be redireced to homepage..`
+										message: `You have created a new account successfully. You'll be redireced to homepage..`
 									});
 									localStorage.setItem('loggedIn', true);
 									props.updateAccount(res.data.profile);
@@ -77,6 +81,18 @@ const Export = (props) => {
 											{errors.username && touched.username && <Form.Text className="text-danger">{errors.username}</Form.Text>}
 										</Form.Group>
 										<Form.Group>
+											<Form.Label>Email</Form.Label>
+											<Form.Control
+												type="email"
+												name="email"
+												placeholder="Email address"
+												onChange={handleChange}
+												onBlur={handleBlur}
+												value={values.email}
+											/>
+											{errors.email && touched.email && <Form.Text className="text-danger">{errors.email}</Form.Text>}
+										</Form.Group>
+										<Form.Group>
 											<Form.Label>Password</Form.Label>
 											<Form.Control
 												type="password"
@@ -87,6 +103,18 @@ const Export = (props) => {
 												value={values.password}
 											/>
 											{errors.password && touched.password && <Form.Text className="text-danger">{errors.password}</Form.Text>}
+										</Form.Group>
+										<Form.Group>
+											<Form.Label>Confirm password</Form.Label>
+											<Form.Control
+												type="password"
+												name="cpassword"
+												placeholder="Confirm password"
+												onChange={handleChange}
+												onBlur={handleBlur}
+												value={values.cpassword}
+											/>
+											{errors.cpassword && touched.cpassword && <Form.Text className="text-danger">{errors.cpassword}</Form.Text>}
 										</Form.Group>
 										<Button variant="primary" type="submit" disabled={isSubmitting}>Submit</Button>
 									</Form>
