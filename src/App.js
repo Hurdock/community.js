@@ -1,35 +1,43 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { updateAccount } from './store/actions_creators';
 import Axios from './utils/axios';
+import { GuestRoute, AdminRoute } from './utils/specificRoutes';
 
 // Pages
 import NoMatch from './views/404'
 import Home from './views/Home'
 import Login from './views/Login'
 import Register from './views/Register'
+import AddNews from './views/AddNews'
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+const App = (props) => {
+
+  useEffect(() => {
     if (localStorage.getItem('loggedIn')) {
       Axios.get('/auth/resume')
-        .then((res) => props.updateAccount(res.data.profile))
-        .catch((err) => localStorage.removeItem('loggedIn'));
+        .then((res) => props.updateAccount(res.data))
+        .catch(() => localStorage.removeItem('loggedIn'));
     }
-  }
-  render() {
-    return (
-      <Router>
-        <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/auth/login" exact component={Login} />
-          <Route path="/auth/register" exact component={Register} />
-          <Route component={NoMatch} />
-        </Switch>
-      </Router>
-    )
+  }, []);
+
+  return (
+    <Router>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <GuestRoute path="/auth/login" exact component={Login} account={props.account} />
+        <GuestRoute path="/auth/register" exact component={Register} account={props.account}  />
+        <AdminRoute path="/add-news" exact component={AddNews} account={props.account}  />
+        <Route component={NoMatch} />
+      </Switch>
+    </Router>
+  )
+}
+
+const mapStateToProps = state => {
+  return {
+    account: state.account
   }
 }
 
@@ -41,4 +49,4 @@ const mapDispatchToProps = dispatch => {
 	};
 };
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);

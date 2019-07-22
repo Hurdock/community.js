@@ -3,33 +3,17 @@ import { connect } from 'react-redux';
 import { updateAccount } from '../store/actions_creators';
 import { Alert, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
+import { registerSchema } from '../utils/validations';
 import Header from './Layouts/Header';
 import Axios from '../utils/axios';
 
-const Export = (props) => {
+const Register = (props) => {
 	const [alert, updateAlert] = useState({ type: null, message: null });
-	if(props.account != null) { props.history.replace('/'); }
 
 	function setAlert(obj) {
 		updateAlert(obj);
 		setTimeout(() => updateAlert({ type: null, message: null }), 3000);
 	}
-
-	const SignupSchema = Yup.object().shape({
-		username: Yup.string()
-			.min(2, 'Too Short!')
-			.max(50, 'Too Long!')
-			.required('Username is required'),
-		password: Yup.string()
-			.min(2, 'Too Short!')
-			.max(50, 'Too Long!')
-			.required('Password is required'),
-		cpassword: Yup.string().oneOf([Yup.ref('password'), null], "Passwords don't match").required('Confirm Password is required'),
-		email: Yup.string()
-			.email('Invalid email')
-			.required('Email address is required')
-	});
 
 	return (
 		<React.Fragment>
@@ -41,7 +25,7 @@ const Export = (props) => {
 						<hr />
 						{alert.type !== null ? <Alert variant={alert.type}>{alert.message}</Alert> : null}
 						<Formik
-							validationSchema={SignupSchema}
+							validationSchema={registerSchema}
 							initialValues={{ username: '', email: '', password: '', cpassword: '' }}
 							onSubmit={(values, actions) => {
 								Axios.post('/auth/register', { form: values }).then((res) => {
@@ -50,75 +34,68 @@ const Export = (props) => {
 										message: `You have created a new account successfully. You'll be redireced to homepage..`
 									});
 									localStorage.setItem('loggedIn', true);
-									props.updateAccount(res.data.profile);
-									setTimeout(() => props.history.replace('/'), 3000);
+									setTimeout(() => {
+										props.updateAccount(res.data);
+										props.history.replace('/')
+									}, 2000);	
 								}).catch((err) => {
 									setAlert({ type: 'danger', message: err.response.data.error });
 									actions.setSubmitting(false);
 								});
 							}}
-							render={({
-								values,
-								errors,
-								status,
-								touched,
-								handleBlur,
-								handleChange,
-								handleSubmit,
-								isSubmitting,
-							}) => (
-									<Form onSubmit={handleSubmit}>
-										<Form.Group>
-											<Form.Label>Username</Form.Label>
-											<Form.Control
-												type="text"
-												name="username"
-												placeholder="Username"
-												onChange={handleChange}
-												onBlur={handleBlur}
-												value={values.username}
-											/>
-											{errors.username && touched.username && <Form.Text className="text-danger">{errors.username}</Form.Text>}
-										</Form.Group>
-										<Form.Group>
-											<Form.Label>Email</Form.Label>
-											<Form.Control
-												type="email"
-												name="email"
-												placeholder="Email address"
-												onChange={handleChange}
-												onBlur={handleBlur}
-												value={values.email}
-											/>
-											{errors.email && touched.email && <Form.Text className="text-danger">{errors.email}</Form.Text>}
-										</Form.Group>
-										<Form.Group>
-											<Form.Label>Password</Form.Label>
-											<Form.Control
-												type="password"
-												name="password"
-												placeholder="Password"
-												onChange={handleChange}
-												onBlur={handleBlur}
-												value={values.password}
-											/>
-											{errors.password && touched.password && <Form.Text className="text-danger">{errors.password}</Form.Text>}
-										</Form.Group>
-										<Form.Group>
-											<Form.Label>Confirm password</Form.Label>
-											<Form.Control
-												type="password"
-												name="cpassword"
-												placeholder="Confirm password"
-												onChange={handleChange}
-												onBlur={handleBlur}
-												value={values.cpassword}
-											/>
-											{errors.cpassword && touched.cpassword && <Form.Text className="text-danger">{errors.cpassword}</Form.Text>}
-										</Form.Group>
-										<Button variant="primary" type="submit" disabled={isSubmitting}>Submit</Button>
-									</Form>
-								)}
+							render={({ values, errors, status, touched, handleBlur, handleChange, handleSubmit, isSubmitting, }) => (
+								<Form onSubmit={handleSubmit}>
+									<Form.Group>
+										<Form.Label>Username</Form.Label>
+										<Form.Control
+											type="text"
+											name="username"
+											placeholder="Username"
+											onChange={handleChange}
+											onBlur={handleBlur}
+											value={values.username}
+										/>
+										{errors.username && touched.username && <Form.Text className="text-danger">{errors.username}</Form.Text>}
+									</Form.Group>
+									<Form.Group>
+										<Form.Label>Email</Form.Label>
+										<Form.Control
+											type="email"
+											name="email"
+											placeholder="Email address"
+											onChange={handleChange}
+											onBlur={handleBlur}
+											value={values.email}
+										/>
+										{errors.email && touched.email && <Form.Text className="text-danger">{errors.email}</Form.Text>}
+									</Form.Group>
+									<Form.Group>
+										<Form.Label>Password</Form.Label>
+										<Form.Control
+											type="password"
+											name="password"
+											placeholder="Password"
+											onChange={handleChange}
+											onBlur={handleBlur}
+											value={values.password}
+										/>
+										{errors.password && touched.password && <Form.Text className="text-danger">{errors.password}</Form.Text>}
+									</Form.Group>
+									<Form.Group>
+										<Form.Label>Confirm password</Form.Label>
+										<Form.Control
+											type="password"
+											name="cpassword"
+											placeholder="Confirm password"
+											onChange={handleChange}
+											onBlur={handleBlur}
+											value={values.cpassword}
+										/>
+										{errors.cpassword && touched.cpassword && <Form.Text className="text-danger">{errors.cpassword}</Form.Text>}
+									</Form.Group>
+									<Button variant="primary" type="submit" disabled={isSubmitting}>Submit</Button>
+								</Form>
+							)}
 						/>
 					</Col>
 				</Row>
@@ -127,11 +104,6 @@ const Export = (props) => {
 	)
 }
 
-const mapStateToProps = state => {
-  return {
-    account: state.account
-  }
-}
 const mapDispatchToProps = dispatch => {
 	return {
 		updateAccount: (data) => {
@@ -140,4 +112,4 @@ const mapDispatchToProps = dispatch => {
 	};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Export);
+export default connect(null, mapDispatchToProps)(Register);

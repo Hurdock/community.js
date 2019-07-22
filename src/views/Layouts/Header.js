@@ -4,10 +4,16 @@ import { Helmet } from 'react-helmet'
 import { Container } from 'react-bootstrap'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import { updateAccount } from '../../store/actions_creators';
 
 const Export = (props) => {
 
   const [menuToggle, setMenu] = useState(false);
+  
+  function logOut() {
+    props.updateAccount(null);
+    localStorage.removeItem('loggedIn');
+  }
 
   return (
     <React.Fragment>
@@ -22,10 +28,11 @@ const Export = (props) => {
           </div>
           <div className="menu">
             <Link className="item" to="/">Home</Link>
-            { JSON.stringify(props.account) }
             {props.account === null ? <Link className="item" to="/auth/login">Login</Link> : null}
             {props.account === null ? <Link className="item" to="/auth/register">Register</Link> : null}
             {props.account !== null ? <Link className="item" to={`/profile/${props.account.username}`}>My profile</Link> : null}
+            {props.account !== null && props.account.admin != null ? <Link className="item" to={`/add-news`}>Add News</Link>  : null}
+            {props.account !== null ? <div className="item" onClick={logOut}>Log out</div> : null}
           </div>
           <div onClick={() => { setMenu(!menuToggle) }} className="menu-button">
             <i className="fa fa-bars"></i>
@@ -37,19 +44,27 @@ const Export = (props) => {
 
 }
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+		updateAccount: (data) => {
+			dispatch(updateAccount(data))
+    } 
+  }
+}
+
 const mapStateToProps = (state) => {
   return {
     account: state.account
   }
 }
 
-export default connect(mapStateToProps)(Export);
+export default connect(mapStateToProps, mapDispatchToProps)(Export);
 
 let Header = styled.div`
   background: #bb5252;
   margin-bottom: 20px;
   @media (max-width: 1100px) {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
   .content {
     display: flex;

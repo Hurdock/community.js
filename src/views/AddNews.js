@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { updateAccount } from '../store/actions_creators';
 import { Alert, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
-import { loginSchema } from '../utils/validations';
+import { newsSchema } from '../utils/validations';
 import Header from './Layouts/Header';
 import Axios from '../utils/axios';
 
-const Login = (props) => {	
+export default (props) => {	
 	const [alert, updateAlert] = useState({ type: null, message: null });
 
 	function setAlert(obj) {
@@ -17,27 +15,22 @@ const Login = (props) => {
 
 	return (
 		<React.Fragment>
-			<Header title="Authentication"></Header>
+			<Header title="Write news"></Header>
 			<Container>
 				<Row>
 					<Col lg={8}>
-						<h1>Authentication</h1>
+						<h1>Write news</h1>
 						<hr />
 						{alert.type !== null ? <Alert variant={alert.type}>{alert.message}</Alert> : null}
 						<Formik
-							validationSchema={loginSchema}
-							initialValues={{ username: '', password: '' }}
+							validationSchema={newsSchema}
+							initialValues={{ title: '', content: '' }}
 							onSubmit={(values, actions) => {
-								Axios.post('/auth/login', { form: values }).then((res) => {
+								Axios.post('/news/create', { form: values }).then((res) => {
 									setAlert({
 										type: 'success',
-										message: `You have successfully logged in. You'll be redireced to homepage..`
-									});
-									localStorage.setItem('loggedIn', true);
-									setTimeout(() => {
-										props.updateAccount(res.data);
-										props.history.replace('/')
-									}, 2000);
+										message: `Article successfully added to database.`
+									});									 
 								}).catch((err) => {
 									setAlert({ type: 'danger', message: err.response.data.error });
 									actions.setSubmitting(false);
@@ -46,28 +39,30 @@ const Login = (props) => {
 							render={({ values, errors, status, touched, handleBlur, handleChange, handleSubmit, isSubmitting }) => (
 								<Form onSubmit={handleSubmit}>
 									<Form.Group>
-										<Form.Label>Username</Form.Label>
+										<Form.Label>Title</Form.Label>
 										<Form.Control
 											type="text"
-											name="username"
-											placeholder="Username"
+											name="title"
+											placeholder="Title"
 											onChange={handleChange}
 											onBlur={handleBlur}
-											value={values.username}
+											value={values.title}
 										/>
-										{errors.username && touched.username && <Form.Text className="text-danger">{errors.username}</Form.Text>}
+										{errors.title && touched.title && <Form.Text className="text-danger">{errors.title}</Form.Text>}
 									</Form.Group>
 									<Form.Group>
-										<Form.Label>Password</Form.Label>
+										<Form.Label>Content</Form.Label>
 										<Form.Control
-											type="password"
-											name="password"
-											placeholder="Password"
+											type="text"
+                      name="content"
+                      as="textarea" 
+                      rows="3"
+											placeholder="Content"
 											onChange={handleChange}
 											onBlur={handleBlur}
-											value={values.password}
+											value={values.content}
 										/>
-										{errors.password && touched.password && <Form.Text className="text-danger">{errors.password}</Form.Text>}
+										{errors.content && touched.content && <Form.Text className="text-danger">{errors.content}</Form.Text>}
 									</Form.Group>
 									<Button variant="primary" type="submit" disabled={isSubmitting}>Submit</Button>
 								</Form>
@@ -80,17 +75,3 @@ const Login = (props) => {
 	)
 }
 
-const mapStateToProps = state => {
-  return {
-    account: state.account
-  }
-}
-const mapDispatchToProps = dispatch => {
-	return {
-		updateAccount: (data) => {
-			dispatch(updateAccount(data))
-		}
-	};
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
