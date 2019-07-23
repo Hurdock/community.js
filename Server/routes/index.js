@@ -6,7 +6,7 @@ const router = express.Router();
 
 import auth from './authentication'
 import users from './users';
-import news from './news';
+import articles from './articles';
 
 router.use(session({
     secret: 'keyboard cat',
@@ -22,6 +22,6 @@ router.use(cors({
 
 router.use('/auth', auth);
 router.use('/users', users);
-router.use('/news', news);
+router.use('/articles', articles);
 
 export default router;

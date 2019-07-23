@@ -18,16 +18,16 @@ export default (props) => {
 
 	return (
 		<React.Fragment>
-			<Header title="New article"></Header>
+			<Header title="Post article"></Header>
 			<Container singleCol={true}>
-				<h3>New Article</h3>
+				<h3>Post Article</h3>
 				<hr />
 				{alert.type !== null ? <Alert variant={alert.type}>{alert.message}</Alert> : null}
 				<Formik
 					validationSchema={newsSchema}
-					initialValues={{ title: '', content: '' }}
+					initialValues={{ title: '', fullContent: '', shortContent: '' }}
 					onSubmit={(values, actions) => {
-						Axios.post('/news/create', { form: values })
+						Axios.post('/articles/create', { form: values })
 						.then((res) => setAlert({ type: 'success', 	message: `Article '${values.title}' published to homepage.` }))
 						.catch((err) => {
 							setAlert({ type: 'danger', message: err.response.data.error });
@@ -49,12 +49,20 @@ export default (props) => {
 								{errors.title && touched.title && <Form.Text className="text-danger">{errors.title}</Form.Text>}
 							</Form.Group>
 							<Form.Group>
-								<Form.Label>Content</Form.Label>
+								<Form.Label>Summary</Form.Label>
 								<CKEditor
 									editor={ ClassicEditor }
-									onChange={ ( event, editor ) => values.content = editor.getData()}
+									onChange={ ( event, editor ) => values.shortContent = editor.getData()}
 								/>
-								{errors.content && touched.content && <Form.Text className="text-danger">{errors.content}</Form.Text>}
+								{errors.shortContent && touched.shortContent && <Form.Text className="text-danger">{errors.shortContent}</Form.Text>}
+							</Form.Group>
+							<Form.Group>
+								<Form.Label>Article content</Form.Label>
+								<CKEditor
+									editor={ ClassicEditor }
+									onChange={ ( event, editor ) => values.fullContent = editor.getData()}
+								/>
+								{errors.fullContent && touched.fullContent && <Form.Text className="text-danger">{errors.fullContent}</Form.Text>}
 							</Form.Group>
 							<Button variant="primary" type="submit" disabled={isSubmitting}>Submit</Button>
 						</Form>

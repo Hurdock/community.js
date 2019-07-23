@@ -7,16 +7,20 @@ import NoMatch from './Pages/404'
 import Home from './Pages/Home'
 import Login from './Pages/Auth/Login'
 import Register from './Pages/Auth/Register'
-import AddNews from './Pages/News/Create'
+import Articles from './Pages/Articles'
+import Article from './Pages/Articles/Single';
+import PostArticle from './Pages/Articles/Create'
 
 const App = (props) => {
   return (
     <Router>
       <Switch>
         <Route path="/" exact component={Home} />
+        <Route path="/articles/:page" exact component={Articles} />
+        <Route path="/article/:slug" exact component={Article} />
+        <AdminRoute path="/post-article" exact component={PostArticle} account={props.account}  />
         <GuestRoute path="/auth/login" exact component={Login} account={props.account} />
         <GuestRoute path="/auth/register" exact component={Register} account={props.account}  />
-        <AdminRoute path="/add-news" exact component={AddNews} account={props.account}  />
         <Route component={NoMatch} />
       </Switch>
     </Router>

@@ -31,8 +31,11 @@ export const newsSchema =  Yup.object().shape({
     .min(5, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Title is required'),
-  content: Yup.string()
+  shortContent: Yup.string()
     .min(2, 'Too Short!')
     .max(500, 'Too Long!')
-    .required('Content is required')
+    .required('Content is required'),
+  fullContent: Yup.string()
+  .min(2, 'Too Short!')
+  .required('Content is required')
 });
