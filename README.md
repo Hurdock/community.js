@@ -1,13 +1,13 @@
 <h1>Community.js</h1>
 
-Used:
+<p>I'm still working on this project.</p>
 
 <b>Server</b>
 <ul>
   <li>Express.js</li>
   <li>MongoDB & Mongoose</li>
   <li>Yup.js</li>
-<ul>
+</ul>
 
 <b>Client</b>
 <ul>
