@@ -11,17 +11,13 @@ const AppState = (props) => {
 
   useEffect(() => {
     if(loading) {
-      async function fetchAccount() {
-        const response = await Axios.get('/auth/resume')
-        if(response) {
-          updateAccount(response.data);
-          setLoading(false);
-        } else {
-          localStorage.removeItem('loggedIn');
-          setLoading(false);
-        }
-      }
-      fetchAccount();
+      Axios.get('/auth/resume').then((res) => {
+        updateAccount(res.data);
+        setLoading(false);
+      }).catch((err) => {
+        localStorage.removeItem('loggedIn');
+        setLoading(false);
+      })
     }
   }, [updateAccount, loading]);
   return (loading === false ? (<App account={props.account} />) : null)
