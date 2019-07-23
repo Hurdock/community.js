@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { updateAccount } from '../store/actions_creators';
+import { updateAccount } from '../../../store/actions_creators';
 import { Alert, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
-import { loginSchema } from '../utils/validations';
-import Header from './Layouts/Header';
-import Axios from '../utils/axios';
+import { loginSchema } from '../../../utils/validations';
+import Header from '../../Layouts/Header';
+import Axios from '../../../utils/axios';
 
 const Login = (props) => {	
 	const [alert, updateAlert] = useState({ type: null, message: null });
@@ -29,15 +29,12 @@ const Login = (props) => {
 							initialValues={{ username: '', password: '' }}
 							onSubmit={(values, actions) => {
 								Axios.post('/auth/login', { form: values }).then((res) => {
-									setAlert({
+									updateAlert({
 										type: 'success',
-										message: `You have successfully logged in. You'll be redireced to homepage..`
+										message: `You have successfully logged in. You'll be redirected to homepage..`
 									});
 									localStorage.setItem('loggedIn', true);
-									setTimeout(() => {
-										props.updateAccount(res.data);
-										props.history.replace('/')
-									}, 2000);
+									props.updateAccount(res.data);
 								}).catch((err) => {
 									setAlert({ type: 'danger', message: err.response.data.error });
 									actions.setSubmitting(false);

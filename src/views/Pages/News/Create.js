@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Alert, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
-import { newsSchema } from '../utils/validations';
-import Header from './Layouts/Header';
-import Axios from '../utils/axios';
+import { newsSchema } from '../../../utils/validations'; 
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import Header from '../../Layouts/Header';
+import Axios from '../../../utils/axios';
 
 export default (props) => {	
 	const [alert, updateAlert] = useState({ type: null, message: null });
@@ -18,20 +20,18 @@ export default (props) => {
 			<Header title="Write news"></Header>
 			<Container>
 				<Row>
-					<Col lg={8}>
-						<h1>Write news</h1>
+					<Col>
+						<h3>New Article</h3>
 						<hr />
 						{alert.type !== null ? <Alert variant={alert.type}>{alert.message}</Alert> : null}
+						
 						<Formik
 							validationSchema={newsSchema}
 							initialValues={{ title: '', content: '' }}
 							onSubmit={(values, actions) => {
-								Axios.post('/news/create', { form: values }).then((res) => {
-									setAlert({
-										type: 'success',
-										message: `Article successfully added to database.`
-									});									 
-								}).catch((err) => {
+								Axios.post('/news/create', { form: values })
+								.then((res) => setAlert({ type: 'success', 	message: `Article '${values.title}' published to homepage.` }))
+								.catch((err) => {
 									setAlert({ type: 'danger', message: err.response.data.error });
 									actions.setSubmitting(false);
 								});
@@ -52,15 +52,9 @@ export default (props) => {
 									</Form.Group>
 									<Form.Group>
 										<Form.Label>Content</Form.Label>
-										<Form.Control
-											type="text"
-                      name="content"
-                      as="textarea" 
-                      rows="3"
-											placeholder="Content"
-											onChange={handleChange}
-											onBlur={handleBlur}
-											value={values.content}
+										<CKEditor
+											editor={ ClassicEditor }
+											onChange={ ( event, editor ) => values.content = editor.getData()}
 										/>
 										{errors.content && touched.content && <Form.Text className="text-danger">{errors.content}</Form.Text>}
 									</Form.Group>

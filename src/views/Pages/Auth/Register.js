@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { updateAccount } from '../store/actions_creators';
+import { updateAccount } from '../../../store/actions_creators';
 import { Alert, Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { Formik } from 'formik';
-import { registerSchema } from '../utils/validations';
-import Header from './Layouts/Header';
-import Axios from '../utils/axios';
+import { registerSchema } from '../../../utils/validations';
+import Header from '../../Layouts/Header';
+import Axios from '../../../utils/axios';
 
 const Register = (props) => {
 	const [alert, updateAlert] = useState({ type: null, message: null });
@@ -29,15 +29,12 @@ const Register = (props) => {
 							initialValues={{ username: '', email: '', password: '', cpassword: '' }}
 							onSubmit={(values, actions) => {
 								Axios.post('/auth/register', { form: values }).then((res) => {
-									setAlert({
+									updateAlert({
 										type: 'success',
 										message: `You have created a new account successfully. You'll be redireced to homepage..`
 									});
 									localStorage.setItem('loggedIn', true);
-									setTimeout(() => {
-										props.updateAccount(res.data);
-										props.history.replace('/')
-									}, 2000);	
+									props.updateAccount(res.data);
 								}).catch((err) => {
 									setAlert({ type: 'danger', message: err.response.data.error });
 									actions.setSubmitting(false);
