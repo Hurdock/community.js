@@ -18,13 +18,13 @@ const Export = (props) => {
   return (
     <React.Fragment>
       <Helmet>
-        <title>Community.js - {props.title}</title>
+        <title>Blog - {props.title}</title>
         <meta name="description" content="React application" />
       </Helmet>
       <Header menuToggle={menuToggle}>
         <Container className="content">
           <div className="logo">
-            <div className="logo-text">Community.js</div>
+            <div className="logo-text">Blog</div>
           </div>
           <div className="menu">
             <Link className="item" to="/">Home</Link>
