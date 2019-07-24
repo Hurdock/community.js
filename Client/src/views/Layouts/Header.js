@@ -30,7 +30,6 @@ const Export = (props) => {
             <Link className="item" to="/">Home</Link>
             {props.account === null ? <Link className="item" to="/auth/login">Login</Link> : null}
             {props.account === null ? <Link className="item" to="/auth/register">Register</Link> : null}
-            {props.account !== null ? <Link className="item" to={`/profile/${props.account.username}`}>My profile</Link> : null}
             {props.account !== null && props.account.admin != null ? <Link className="item" to={`/post-article`}>Add Article</Link>  : null}
             {props.account !== null ? <div className="item" onClick={logOut}>Log out</div> : null}
           </div>

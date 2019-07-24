@@ -14,4 +14,5 @@
   <li>React.js</li>
   <li>Redux & React-Redux</li>
   <li>Formik</li>
+  <li>Bootstrap</li>
 </ul>

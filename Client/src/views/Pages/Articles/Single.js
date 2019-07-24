@@ -10,7 +10,8 @@ export default (props) => {
   const [article, setArticle] = useState({
     title: 'Fetching article',
     shortContent: '',
-    fullContent: 'Loading..'
+    fullContent: 'Loading..',
+    author: {}
   });
 
   const Slug = props.match.params.slug;
@@ -36,6 +37,7 @@ export default (props) => {
         <Container singleCol={true}>
           <h1>{article.title}</h1>
           <div dangerouslySetInnerHTML={{__html: article.fullContent}}></div>
+          <b>Article written by {article.author.username}</b>
         </Container>
       </Loading>
     </React.Fragment>
