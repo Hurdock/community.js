@@ -1,11 +1,9 @@
-<h1>Community.js</h1>
-
-<p>I'm still working on this project.</p>
+<h1>React Blog - Web Application</h1>
 
 <b>Server</b>
 <ul>
   <li>Express.js</li>
-  <li>MongoDB & Mongoose</li>
+  <li>MongoDB</li>
   <li>Yup.js</li>
 </ul>
 
